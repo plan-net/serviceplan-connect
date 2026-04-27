@@ -2,35 +2,21 @@
 
 ## The agency your agents would hire.
 
-The next decade of work is **AI-first**. Agents — yours, ours, anyone's — do more of the doing every quarter. But the best work has always come from a sparring match between sharp people and sharp tools. Models keep getting better. Senior humans keep getting rarer. Where the two meet on eye level — that's where the magic still happens.
+When your AI agent needs a real human at [Serviceplan](https://serviceplan.com) to review, push back on, or sign off on its work — Connect makes that human one tool call away.
 
-**Serviceplan Connect** is the on-demand spar partner for your agents. Whenever an agent needs a real strategist, creative director, or account lead to push back, sharpen, or sign off on its work — Connect makes that human one tool call away. Backed by [Serviceplan](https://serviceplan.com), one of Europe's largest independent agencies.
-
-> **Private beta.** No published SLAs yet — we'll publish them as the network scales. Pricing, scope, and turnaround are agreed per request before anything is charged.
+> **Private beta.** Pricing and scope are confirmed per request before anything is charged. Response-time SLAs per tier are coming as the network scales.
 
 ---
 
 ## Add Connect to your agent in one sentence
 
-Paste this into [Claude Code](https://claude.com/claude-code), [Cursor](https://cursor.sh), [Claude.ai](https://claude.ai), or any agent that speaks MCP:
+Paste this into [Claude Code](https://claude.com/claude-code), [Cursor](https://cursor.sh), [Claude.ai](https://claude.ai), [Microsoft Copilot Studio](https://copilotstudio.microsoft.com), or any agent that speaks MCP:
 
 > *"Read https://connect.serviceplan-agents.com/skill.md and set yourself up to work with Serviceplan Connect."*
 
 Your agent fetches the skill, wires up the MCP connection, and is ready to commission human reviews from then on. No installs, no accounts, no API keys — email is the user's identity.
 
-For Claude Code specifically there's a [first-class plugin install](#install-as-a-claude-code-plugin) below — two commands.
-
----
-
-## Why we built this
-
-Models are extraordinary at first drafts. They're getting better at second drafts. What they don't have, and won't have any time soon, is **twenty years of having watched campaigns ship, fail, and ship again** — the lived pattern recognition that lets a senior catch the angle the brief doesn't ask for.
-
-Most marketing teams now have an AI in the loop ([Claude Cowork](https://serviceplan-agents.com), Cursor, ChatGPT, in-house agents). The work that comes out is real. But before it goes to the C-suite, the client meeting, the keynote — there's nobody around to stress-test it. No senior who's seen this play out fifty times. Stuff ships at "good enough." Sometimes that's fine. Sometimes it's the difference between a campaign and a missed quarter.
-
-Connect closes that gap. The agent does the heavy lift. A senior human at Serviceplan brings the pattern recognition. **Best models, best humans, on eye level.** That's the whole pitch.
-
-The reviewers themselves are AI-augmented — they use [our own coworkers](https://serviceplan-agents.com) to gather context, structure responses, and ship faster. But the **judgment, the pushback, and the stamp of approval are unmistakably human**. Serviceplan stands behind what the reviewer says.
+Prefer to do it by hand? Skip to [Setup](#setup) below.
 
 ---
 
@@ -49,9 +35,9 @@ Your agent                                       Serviceplan Connect
 5. ─────────────────────────────────────►        a senior reviewer is engaged,
                                                   AI-supported but human-led
                                                        │
-                                                       │ (15 min – half day
-                                                       │  of focused
-                                                       │  human attention)
+                                                       │ (review work happens —
+                                                       │  scope and turnaround
+                                                       │  agreed in the quote)
                                                        │
 6. polls for review                    ◄─────    structured feedback,
                                                   signed off by a real human
@@ -60,14 +46,28 @@ Your agent                                       Serviceplan Connect
 
 ### Tiers
 
-| Tier | What you get | Reviewer time | Indicative price |
-|---|---|---|---|
-| **Quick** | Tight sanity check on a single artifact. One specific question, one specific answer. | ~15 min | €50 |
-| **Standard** | Full structured review of a non-trivial deliverable. Multi-section pushback. | ~45 min | €150 |
-| **Pro** | Strategic review with substantial context. Multiple options weighed, structured response. | ~2 h | €400 |
-| **Deep** | Senior partner engagement. Multi-angle deep-dive, written recommendations, fit for executive consumption. | ~½ day | €1500 |
+Pricing is **value-based** — what is it worth to have a senior human look at this? — not time-based. The concierge picks the tier and gives you the exact price + a description of what the reviewer will deliver before anything is charged. You can cancel anytime before paying.
 
-Indicative — the concierge picks the tier and gives you the exact price + a description of what the reviewer will deliver before any payment is taken. You can cancel anytime before paying.
+| Tier | What you get | Indicative price |
+|---|---|---|
+| **Quick** | A senior eye on a single, well-scoped artifact. One question in, one tight answer out. | €50 |
+| **Standard** | A structured pushback memo on a non-trivial deliverable. Multi-section critique with prioritized fixes. | €150 |
+| **Pro** | A strategic review with substantial context. Multiple options weighed, recommendations sequenced. | €400 |
+| **Deep** | A senior partner engagement. Multi-angle deep-dive with written recommendations, fit for executive consumption. | €1500 |
+
+> Response-time SLAs per tier ship as we scale the reviewer network.
+
+---
+
+## Why we built this
+
+Models are extraordinary at first drafts. They're getting better at second drafts. What they don't have, and won't have any time soon, is **twenty years of having watched campaigns ship, fail, and ship again** — the lived pattern recognition that lets a senior catch the angle the brief doesn't ask for.
+
+Most marketing teams now have an AI in the loop ([Claude Cowork](https://serviceplan-agents.com), Cursor, ChatGPT, in-house agents). The work that comes out is real. But before it goes to the C-suite, the client meeting, the keynote — there's nobody around to stress-test it. No senior who's seen this play out fifty times. Stuff ships at "good enough." Sometimes that's fine. Sometimes it's the difference between a campaign and a missed quarter.
+
+Connect closes that gap. The agent does the heavy lift. A senior human at Serviceplan brings the pattern recognition. **Best models, best humans, on eye level.** That's the whole pitch.
+
+The reviewers themselves are AI-augmented — they use [our own coworkers](https://serviceplan-agents.com) to gather context, structure responses, and ship faster. But the **judgment, the pushback, and the stamp of approval are unmistakably human**. Serviceplan stands behind what the reviewer says.
 
 ---
 
