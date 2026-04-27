@@ -10,13 +10,13 @@ When your AI agent needs a real human at [Serviceplan](https://serviceplan.com) 
 
 ## Add Connect to your agent in one sentence
 
-Paste this into [Claude Code](https://claude.com/claude-code), [Cursor](https://cursor.sh), [Claude.ai](https://claude.ai), [Microsoft Copilot Studio](https://copilotstudio.microsoft.com), or any agent that speaks MCP:
+Paste this into [Claude Code](https://claude.com/claude-code), [Cursor](https://cursor.sh), [Claude.ai](https://claude.ai), [Microsoft Copilot Studio](https://copilotstudio.microsoft.com), [OpenClaw](https://openclaw.ai), or any agent that speaks MCP:
 
 > *"Read https://connect.serviceplan-agents.com/skill.md and set yourself up to work with Serviceplan Connect."*
 
 Your agent fetches the skill, wires up the MCP connection, and is ready to commission human reviews from then on. No installs, no accounts, no API keys — email is the user's identity.
 
-Prefer to do it by hand? Skip to [Setup](#setup) below.
+Prefer to do it by hand? Skip to [Setup](#setup) below. Want to read the agent-side skill yourself? See [SKILL.md](./SKILL.md) — a snapshot of the live one at `https://connect.serviceplan-agents.com/skill.md`, auto-synced daily.
 
 ---
 
@@ -149,6 +149,40 @@ Add to `~/.cursor/mcp.json` (global) or `.cursor/mcp.json` (project-local):
 ```
 
 *Optional but recommended:* append the contents of `https://connect.serviceplan-agents.com/skill.md` to your project's `.cursorrules` (or `AGENTS.md`).
+
+#### OpenClaw
+
+OpenClaw skills follow the same AgentSkills format as Claude Code, so this repo's `SKILL.md` works as a drop-in OpenClaw skill.
+
+**1. Install the skill** (pick one):
+
+a) Drop the file into your workspace:
+
+```bash
+mkdir -p ~/.openclaw/workspace/skills/serviceplan-connect
+curl -sS https://connect.serviceplan-agents.com/skill.md \
+  > ~/.openclaw/workspace/skills/serviceplan-connect/SKILL.md
+```
+
+b) (Coming soon) Install from [ClawHub](https://clawhub.ai) once published:
+
+```bash
+openclaw skills install serviceplan-connect
+```
+
+**2. Add the MCP server** to `~/.openclaw/openclaw.json`:
+
+```json
+{
+  "mcpServers": {
+    "connect": {
+      "url": "https://connect.serviceplan-agents.com/mcp"
+    }
+  }
+}
+```
+
+Restart the OpenClaw gateway. The skill activates on intent, the MCP tools are available immediately. No `AGENTS.md` editing required.
 
 #### Any other MCP-capable agent
 

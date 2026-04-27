@@ -1,0 +1,80 @@
+name: Sync SKILL.md from hosted source
+
+# Keeps the repo's root-level SKILL.md in sync with the canonical hosted
+# version at https://connect.serviceplan-agents.com/skill.md. The hosted
+# version is the source of truth; this repo holds a versioned snapshot
+# so users browsing the GitHub repo can read it directly and so OpenClaw
+# users can drop the file into ~/.openclaw/workspace/skills/.
+#
+# Runs daily at 06:00 UTC. If the hosted skill differs from the repo
+# snapshot, opens a pull request against main rather than committing
+# directly — a human reviews the diff before it ships.
+#
+# Security note: this workflow does NOT consume any user-controlled
+# inputs (no github.event.*, github.head_ref, etc.). It only fetches
+# a hardcoded URL and runs deterministic file ops, so the standard
+# script-injection risks for GitHub Actions do not apply here.
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Fetch hosted SKILL.md
+        run: |
+          set -euo pipefail
+          curl -sS --fail --max-time 30 \
+            https://connect.serviceplan-agents.com/skill.md \
+            > SKILL.md.fetched
+          if [ ! -s SKILL.md.fetched ]; then
+            echo "::error::Hosted SKILL.md is empty - refusing to sync"
+            exit 1
+          fi
+
+      - name: Compare and decide
+        id: diff
+        run: |
+          if diff -q SKILL.md SKILL.md.fetched > /dev/null 2>&1; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Hosted SKILL.md matches repo snapshot - no sync needed."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Drift detected - will open PR."
+            mv SKILL.md.fetched SKILL.md
+          fi
+
+      - name: Open PR on drift
+        if: steps.diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: chore/sync-skill-md
+          delete-branch: true
+          title: "chore: sync SKILL.md from hosted source"
+          commit-message: "chore: sync SKILL.md from connect.serviceplan-agents.com/skill.md"
+          body: |
+            The hosted skill at `https://connect.serviceplan-agents.com/skill.md`
+            differs from the snapshot in this repo. This PR brings the repo
+            snapshot back in line.
+
+            Source of truth: `static/connect_skill.md` in the
+            [agentic-coworkers](https://github.com/plan-net/agentic-coworkers)
+            repo, served via the Container App at
+            `connect.serviceplan-agents.com/skill.md`.
+
+            This PR was opened automatically by `.github/workflows/sync-skill.yml`.
+            Review the diff before merging - if the hosted skill regressed,
+            fix it upstream first rather than merging this PR.
+          labels: |
+            automated
+            docs
