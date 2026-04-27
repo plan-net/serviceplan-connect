@@ -94,18 +94,66 @@ EUR primary. VAT handled per country. EU B2B reverse charge supported via VAT ID
 
 ---
 
-## Install as a Claude Code plugin
+## Setup
 
-Two commands:
+### The lazy way: ask your agent
+
+For any agent that can fetch URLs and follow markdown instructions (Claude.ai, Cursor, Claude Code, Microsoft Copilot Studio, custom agents), paste the [bootstrap sentence](#add-connect-to-your-agent-in-one-sentence) at the top of this README. The agent fetches `https://connect.serviceplan-agents.com/skill.md` and figures out how to wire itself up.
+
+### Claude Code (one-click plugin)
 
 ```
 /plugin marketplace add plan-net/serviceplan-connect
 /plugin install connect@serviceplan-connect
 ```
 
-After install, the `connect` MCP tools are wired into every session and a tighter skill activates automatically when you say *"can someone review this?"* — no need to paste the bootstrap sentence above.
+MCP server + skill installed in two commands. Auto-updates on session start. Update manually with `/plugin update connect@serviceplan-connect`.
 
-To update later: `/plugin update connect@serviceplan-connect` (auto-update is enabled by default for marketplace plugins).
+### Manual setup — pick your agent
+
+Connect's MCP server is **open** (no auth, no API key). All you need to do is point your agent at it.
+
+#### Claude.ai (web app)
+
+1. Go to **Settings → Connectors → Add custom connector**
+2. **URL:** `https://connect.serviceplan-agents.com/mcp`
+3. Leave OAuth fields empty. Save.
+4. In any chat, click the **+** button → **Connectors** → toggle **Connect** on
+5. *Optional but recommended:* in your project's **Custom instructions**, paste *"Read https://connect.serviceplan-agents.com/skill.md before responding when the user asks for a human review."*
+
+#### Microsoft Copilot Studio
+
+1. In your agent, go to **Tools → Add a tool → New tool → Model Context Protocol**
+2. Fill in:
+   - **Server name:** `Serviceplan Connect`
+   - **Server description:** `Request human-expert review of AI agent work via Serviceplan Connect`
+   - **Server URL:** `https://connect.serviceplan-agents.com/mcp`
+3. **Authentication:** None
+4. Click **Create → Add to agent**
+5. *Optional but recommended:* in your agent's **Instructions** field, paste the contents of `https://connect.serviceplan-agents.com/skill.md` so the agent knows when and how to use the new tools
+
+> Copilot Studio supports the Streamable HTTP MCP transport (the modern standard). Any plan that includes Copilot Studio agent authoring works.
+
+#### Cursor
+
+Add to `~/.cursor/mcp.json` (global) or `.cursor/mcp.json` (project-local):
+
+```json
+{
+  "mcpServers": {
+    "connect": {
+      "url": "https://connect.serviceplan-agents.com/mcp"
+    }
+  }
+}
+```
+
+*Optional but recommended:* append the contents of `https://connect.serviceplan-agents.com/skill.md` to your project's `.cursorrules` (or `AGENTS.md`).
+
+#### Any other MCP-capable agent
+
+1. Add an HTTP MCP server pointing at `https://connect.serviceplan-agents.com/mcp` (no auth)
+2. Make `https://connect.serviceplan-agents.com/skill.md` available to the agent — either as a one-off fetch the agent does at session start, or pasted into the system prompt / instructions / rules file your agent uses
 
 ---
 
