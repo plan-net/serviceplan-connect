@@ -40,7 +40,7 @@ any payment is taken.
 
 ## Tools (auto-wired via MCP)
 
-You have 6 MCP tools in the `connect` namespace. **Every tool except
+You have 8 MCP tools in the `connect` namespace. **Every tool except
 `request_review` requires both `request_id` AND `email`** — the email is
 the ownership proof, not just a contact field.
 
@@ -55,7 +55,9 @@ the ownership proof, not just a contact field.
    - `received` (queued — poll again in 30s)
    - `analysing` + `next_question` (concierge needs clarification — ask user)
    - `quoted` + `quote` (price + scope description, await user's go-ahead)
-   - `awaiting_payment` + `payment_url` (Stripe link, send to user)
+   - `awaiting_payment` + `approval_url` + `payment_method` (link the
+     **human** clicks to accept the quote + ToS + Privacy Policy — also
+     emailed to them; status flips to `paid` when they confirm)
    - `paid` / `delegated` / `reviewing` (work in progress — KEEP POLLING)
    - `awaiting_review_response` + `next_question` (reviewer asked YOU
      a follow-up — surface to user, then call `respond_to_clarification`)
@@ -68,7 +70,20 @@ the ownership proof, not just a contact field.
    current status, you don't need to know which party asked.
 
 4. **`confirm_quote(request_id, email)`** — user accepted the quote.
-   Returns a Stripe payment URL the user opens in their browser.
+   Returns `{approval_url, payment_method}` — a link the **human** must
+   click to accept the quote AND our Terms of Service + Privacy Policy
+   (work starts the moment they confirm). The link is also emailed to
+   them so they can approve from any device.
+
+   - `payment_method="invoice"` — the email is pre-approved for invoicing
+     and `approval_url` points at our consent page.
+   - `payment_method=null` — Phase 1 placeholder; `approval_url` is null
+     and the team follows up out-of-band. Phase 2 will return a Stripe
+     Checkout URL with the same shape.
+   - `error="monthly_limit_exceeded"` — invoice cap reached. Response
+     includes `spent_this_month_eur` and `limit_eur`. The quote stays
+     open. Tell the user to contact Serviceplan to extend, or wait for
+     next month.
 
 5. **`get_review(request_id, email)`** — fetch the final reviewer feedback
    once status is `completed`. Show it to the user **verbatim**, then
@@ -77,6 +92,64 @@ the ownership proof, not just a contact field.
 6. **`cancel_request(request_id, email, reason?)`** — bail out at any
    non-terminal state. No charge if status was `quoted` or earlier;
    refund (Phase 2+) if paid.
+
+7. **`upload_attachment(request_id, email, name, mime, content_b64)`** —
+   upload a document for an existing request. Returns
+   `{attachment_id, name, mime, size_bytes, expires_at}`. Reference the
+   `attachment_id` in subsequent `attachments[]` arrays on
+   `request_review` (extending the same request via clarification) or
+   `respond_to_clarification`. **Most reviews don't need attachments** —
+   articulate the question first, attach only when the artefact is the
+   only way to convey what's being reviewed.
+   - **Limits:** 25MB per file, 10 files / 100MB per request, 90-day
+     retention from request creation.
+   - **Allowed:** pdf, docx, xlsx, pptx, png, jpg/jpeg, txt, md, csv,
+     json, source code (py, ts, tsx, js, sql, yaml, toml).
+   - **Banned:** executables, archives, video, audio.
+
+8. **`delete_request_data(request_id, email)`** — demand permanent
+   deletion of all user-supplied content (work_summary, attachments,
+   clarification exchange, review response) for a TERMINAL request.
+   Allowed only when status is `completed` / `cancelled` / `refunded` /
+   `expired` / `payment_failed`. To stop an active request, call
+   `cancel_request` first; once cancelled you can delete its data.
+   Idempotent — calling on an already-deleted request is a no-op
+   success. **Tell users they can ask for this at any time after the
+   review is done** — most appreciate having the choice.
+
+## Data retention & deletion
+
+By default, user-supplied content (work_summary, files, clarifications,
+review response) is retained 90 days from request creation. The
+customer can demand sooner deletion via `delete_request_data` once the
+request reaches a terminal status. The audit / financial shell
+(transaction record, tier, amount, consent timestamp + ToS/PP version)
+is preserved indefinitely for regulatory and dispute-resolution
+purposes — but it does NOT contain any content about what the review
+was about.
+
+If a customer wants a permanent copy of their review, save it in your
+own state before they ask for deletion — once `delete_request_data`
+runs, `get_review` returns a generic "deleted" message with no
+fallback.
+
+## Attachment modes
+
+When the customer needs the reviewer to see a document, two modes —
+pick based on customer comfort:
+
+- **"Docs now"**: call `request_review(email, work_summary)` → get
+  request_id → call `upload_attachment` for each file → optionally
+  reinforce via `respond_to_clarification` listing the attachment_ids.
+  Best for existing Serviceplan customers comfortable sharing upfront.
+
+- **"Docs after approval"**: call
+  `request_review(email, work_summary, attachments_to_follow=true)` —
+  text only. Concierge scopes from words alone, posts a quote noting
+  "review starts when documents arrive". Customer approves → status
+  flips to `paid` → concierge asks via the next status poll for the
+  documents → upload + respond. Best for first-time customers who want
+  to see the price first.
 
 ## Recommended interaction flow
 
@@ -93,7 +166,9 @@ the ownership proof, not just a contact field.
 6. If next_question lands: ask user, call respond_to_clarification, poll again
    (cap: 3 clarification rounds per request)
 7. When status='quoted': show quote.text VERBATIM, ask if they want to proceed
-8. If user accepts: confirm_quote → show payment URL → tell user to open it
+8. If user accepts: confirm_quote → show approval_url → tell the user
+   it's also in their inbox and that clicking accepts the quote + ToS + PP.
+   If response is error="monthly_limit_exceeded", show the cap + spent.
 9. KEEP POLLING after payment — reviewer may ask follow-ups (Phase 3)
 10. When status='completed', call get_review → show the reviewer's
     feedback verbatim, offer to incorporate suggestions
@@ -155,9 +230,9 @@ to retrieve the review).
   can ask follow-ups during the review. If you stop, you'll miss them
   and the review stalls. Status `awaiting_review_response` means
   *the reviewer is waiting on YOU* — surface the question.
-- **Don't call `confirm_quote` without explicit user approval.** Once
-  confirmed, the user will be charged at Stripe. Always show the quote
-  first and wait for "yes".
+- **Don't call `confirm_quote` without explicit user approval.** It
+  generates an approval link that the human must click to commit
+  (invoicing or Stripe). Always show the quote first and wait for "yes".
 - **Don't fabricate or paraphrase the reviewer's feedback.** When
   `get_review` returns the deliverable, show it verbatim. The user is
   paying for a human's actual judgment.
