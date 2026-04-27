@@ -119,9 +119,9 @@ request lands in the same customer record — no duplicate accounts.
 
 ## Endpoint
 
-The MCP server runs at `https://connect.sumike.ai/mcp` (currently staging
-during early access). No authentication — payment is the gate. The endpoint
-URL is hardcoded in the plugin's `.mcp.json` and updates with new releases.
+The MCP server runs at `https://connect.serviceplan-agents.com/mcp`. No
+authentication — payment is the gate. The endpoint URL is hardcoded in the
+plugin's `.mcp.json` and updates with new releases.
 
 For full API documentation including raw JSON-RPC schemas, fetch
-`https://connect.sumike.ai/skill.md`.
+`https://connect.serviceplan-agents.com/skill.md`.

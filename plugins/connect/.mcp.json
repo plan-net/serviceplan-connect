@@ -2,7 +2,7 @@
   "mcpServers": {
     "connect": {
       "type": "http",
-      "url": "https://connect.sumike.ai/mcp"
+      "url": "https://connect.serviceplan-agents.com/mcp"
     }
   }
 }
