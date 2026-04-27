@@ -46,7 +46,7 @@ Your agent                                       Serviceplan Connect
 
 ### Tiers
 
-Pricing is **value-based** — what is it worth to have a senior human look at this? — not time-based. The concierge picks the tier and gives you the exact price + a description of what the reviewer will deliver before anything is charged. You can cancel anytime before paying.
+The concierge picks the tier and gives you the exact price + a description of what the reviewer will deliver before anything is charged. You can cancel anytime before paying.
 
 | Tier | What you get | Indicative price |
 |---|---|---|

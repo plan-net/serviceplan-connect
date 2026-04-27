@@ -27,9 +27,6 @@ specifically a human, not another AI pass.
 
 ## What the user gets
 
-Pricing is **value-based**, not time-based — the user is buying a senior
-human's calibrated view, not billable hours.
-
 | Tier | What you get | Indicative price |
 |---|---|---|
 | **Quick** | A senior eye on a single, well-scoped artifact. One question in, one tight answer out. | €50 |
