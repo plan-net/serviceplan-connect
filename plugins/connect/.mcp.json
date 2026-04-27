@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "connect": {
+      "type": "http",
+      "url": "https://connect.sumike.ai/mcp"
+    }
+  }
+}

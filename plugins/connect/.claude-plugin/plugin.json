@@ -1,0 +1,20 @@
+{
+  "name": "connect",
+  "version": "0.2.0",
+  "description": "Request human-expert review of AI agent work via Serviceplan Connect. Concierge analyses the brief, returns a priced quote, takes payment, and delegates to a senior reviewer.",
+  "author": {
+    "name": "Plan.Net Studios",
+    "url": "https://plan.net"
+  },
+  "homepage": "https://github.com/plan-net/serviceplan-connect",
+  "repository": "https://github.com/plan-net/serviceplan-connect",
+  "license": "MIT",
+  "keywords": [
+    "human-in-the-loop",
+    "expert-review",
+    "mcp",
+    "serviceplan"
+  ],
+  "mcpServers": "./.mcp.json",
+  "skills": "./skills/"
+}
